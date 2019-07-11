@@ -61,8 +61,11 @@ sub main {
     }
 
     # do stuff here
+    my $cmd  = shift @ARGV;
     my @hars = map {path($_)} @ARGV;
-    my $dif = App::HarDiff->new;
+    my $diff = App::HarDiff->new( hars => \@hars );
+
+    $diff->$cmd();
 
     return;
 }

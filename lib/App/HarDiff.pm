@@ -1,12 +1,12 @@
 package App::HarDiff;
 
-# Created on: 2019-07-11 20:00:03
+# Created on: 2019-07-12 05:39:44
 # Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-use strict;
+use Moo;
 use warnings;
 use version;
 use Carp;
@@ -15,26 +15,27 @@ use List::Util;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use base qw/Some::Thing/;
+use JSON::XS qw/decode_json encode_json/;
 
+our $VERSION = version->new('0.0.1');
 
-our $VERSION     = version->new('0.0.1');
-our @EXPORT_OK   = qw//;
-our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
+has hars => (
+    is => 'rw',
+);
 
-sub new {
-	my $caller = shift;
-	my $class  = ref $caller ? ref $caller : $caller;
-	my %param  = @_;
-	my $self   = \%param;
+sub sort {
+    my ($self) = @_;
 
-	bless $self, $class;
-
-	return $self;
+    for my $har (@{ $self->hars }) {
+        $har->copy("$har~");
+        my $json = decode_json(scalar $har->slurp);
+        warn join " ", sort keys %$json;
+        $json->{log}{pages} = [
+            sort {},
+            @{$json->{log}{pages}}
+        ];
+    }
 }
-
-
 
 1;
 
